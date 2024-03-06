@@ -1,5 +1,6 @@
 package com.assessment.MiniProject.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,20 +10,22 @@ import lombok.Data;
 import java.util.Date;
 import java.util.List;
 
-@Entity
-@Table(name = "DEMANDS")
-public class DemandModel {
 
+@Entity
+@Table(name = "Demands")
+@Data
+public class DemandModel {
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int Id;
     private String project_name;
-    private String manager_name;
+    private String mgr_name;
     private String level;
     private String location;
     private List<String> skills;
     private String status;
     private double duration;
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date start_date;
 
     public int getId() {
@@ -41,12 +44,12 @@ public class DemandModel {
         this.project_name = project_name;
     }
 
-    public String getManager_name() {
-        return manager_name;
+    public String getMgr_name() {
+        return mgr_name;
     }
 
-    public void setManager_name(String manager_name) {
-        this.manager_name = manager_name;
+    public void setMgr_name(String mgr_name) {
+        this.mgr_name = mgr_name;
     }
 
     public String getLevel() {
