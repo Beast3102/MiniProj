@@ -5,11 +5,15 @@ import com.assessment.MiniProject.model.Membermodel;
 import com.assessment.MiniProject.repository.DemandRepository;
 import com.assessment.MiniProject.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MemberService {
@@ -45,6 +49,10 @@ public class MemberService {
         if(dm.getStatus() == null){
             return memberRepository.findAll();
         }
-        return memberRepository.findAllById(eids.get(0));
+        return memberRepository.findAllById(eids.get(0)).stream()
+                .sorted(Comparator.comparing(Membermodel::getDoj)
+                        .thenComparing(Comparator.comparing(Membermodel::getFirstname))
+                        .thenComparing(Comparator.comparing(Membermodel::getLocation)))
+                .collect(Collectors.toList());
     }
 }
