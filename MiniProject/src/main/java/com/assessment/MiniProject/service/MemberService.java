@@ -2,7 +2,6 @@ package com.assessment.MiniProject.service;
 
 import com.assessment.MiniProject.model.DemandModel;
 import com.assessment.MiniProject.model.Membermodel;
-import com.assessment.MiniProject.queryClass;
 import com.assessment.MiniProject.repository.DemandRepository;
 import com.assessment.MiniProject.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +40,10 @@ public class MemberService {
 
         for(int i = 1; i < eids.size();i++){
             eids.get(0).retainAll(eids.get(i));
+        }
+
+        if(dm.getStatus() == null){
+            return memberRepository.findAll();
         }
         return memberRepository.findAllById(eids.get(0));
     }
