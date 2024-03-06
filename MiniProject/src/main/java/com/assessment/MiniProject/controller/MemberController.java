@@ -1,6 +1,7 @@
 package com.assessment.MiniProject.controller;
 
 import com.assessment.MiniProject.model.Membermodel;
+import com.assessment.MiniProject.responseClass;
 import com.assessment.MiniProject.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,5 +26,10 @@ public class MemberController {
     @GetMapping("/getMembersForDemand")
     public List<Membermodel> getMemberForDemand(@RequestParam int id){
         return memberService.getMemberForDemand(id);
+    }
+
+    @GetMapping("/getMemberOnRequest")
+    public List<Membermodel> getMemberForDemand(@RequestBody responseClass rc){
+        return memberService.getMemberFromDemandRequest(rc.getFirstname(),rc.getLocation(),rc.getLevel(),rc.getStatus(),rc.getEid(),rc.getSkills());
     }
 }
