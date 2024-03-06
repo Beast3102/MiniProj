@@ -23,7 +23,7 @@ public class DemandModel {
     private String level;
     private String location;
     private List<String> skills;
-    private String status;
+    private String status = "open";
     private double duration;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date start_date;

@@ -23,9 +23,9 @@ public class MemberController {
     @GetMapping("/getMembers")
     public List<Membermodel> getMembers(){return memberService.getMembers();}
 
-    @GetMapping("/getMembersForDemand")
-    public List<Membermodel> getMemberForDemand(@RequestParam int id){
-        return memberService.getMemberForDemand(id);
+    @GetMapping("/completeRequest")
+    public String getMemberForDemand(@RequestParam int id){
+        return memberService.completeRequest(id);
     }
 
     @GetMapping("/getMemberOnRequest")

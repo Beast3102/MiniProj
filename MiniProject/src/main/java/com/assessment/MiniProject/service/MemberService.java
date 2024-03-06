@@ -1,18 +1,17 @@
 package com.assessment.MiniProject.service;
 
 import com.assessment.MiniProject.model.DemandModel;
+import com.assessment.MiniProject.model.MappedModel;
 import com.assessment.MiniProject.model.Membermodel;
 import com.assessment.MiniProject.repository.DemandRepository;
+import com.assessment.MiniProject.repository.MappedRepository;
 import com.assessment.MiniProject.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,13 +22,16 @@ public class MemberService {
     @Autowired
     DemandRepository demandRepository;
 
+    @Autowired
+    MappedRepository mappedRepository;
+
     public void createMember(Membermodel membermodel){
         memberRepository.save(membermodel);
     }
 
     public List<Membermodel> getMembers(){return memberRepository.findAll();}
 
-    public List<Membermodel> getMemberForDemand(int id){
+    public List<Integer> getMemberForDemand(int id){
         Optional<DemandModel> temp = demandRepository.findById(id);
         DemandModel dm = null;
         if(temp.isPresent()){
@@ -45,14 +47,7 @@ public class MemberService {
             eids.get(0).retainAll(eids.get(i));
         }
 
-        if(dm.getStatus() == null){
-            return memberRepository.findAll();
-        }
-        return memberRepository.findAllById(eids.get(0)).stream()
-                .sorted(Comparator.comparing(Membermodel::getDoj)
-                        .thenComparing(Comparator.comparing(Membermodel::getFirstname))
-                        .thenComparing(Comparator.comparing(Membermodel::getLocation)))
-                .collect(Collectors.toList());
+        return eids.get(0);
     }
 
     public List<Membermodel> getMemberFromDemandRequest(String name,String location,String level,String status,int eid,List<String> skills){
@@ -78,5 +73,33 @@ public class MemberService {
                         .thenComparing(Comparator.comparing(Membermodel::getFirstname))
                         .thenComparing(Comparator.comparing(Membermodel::getLocation)))
                 .collect(Collectors.toList());
+    }
+
+    public String completeRequest(int id){
+        if(demandRepository.findById(id).isPresent()) {
+            if (Objects.equals(demandRepository.findById(id).get().getStatus(), "open")) {
+                List<Integer> eid = getMemberForDemand(id);
+                if (!eid.isEmpty()) {
+                    Random random = new Random();
+                    int selection = random.nextInt(eid.size());
+                    int mapped_eid = eid.get(selection);
+                    MappedModel mp = new MappedModel();
+                    mp.setEid(mapped_eid);
+                    mp.setProject_id(id);
+                    mappedRepository.save(mp);
+                    memberRepository.updateMemberStatus(mapped_eid);
+                    demandRepository.updateDemandStatus(id);
+                    return ("Member " + mapped_eid + " assigned to project " + id);
+                } else {
+                    return "No available members";
+                }
+            }
+            else {
+                return "Request is closed";
+            }
+        }
+        else {
+            return "No such request";
+        }
     }
 }
